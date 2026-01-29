@@ -1,6 +1,6 @@
 # Prabhas Teja Penugonda
 
-![Headshot](headshot.jpg)
+![Headshot](Headshot.jpg)
 
 📍 Baltimore, MD  
 📧 prabhastejapenugonda@gmail.com  
