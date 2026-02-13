@@ -350,8 +350,6 @@ This capstone project integrates healthcare analytics and marketing intelligence
 
 # 8. References
 
-(Add academic papers, documentation, and sources used in your final report)
-
 - Scikit-learn Documentation
 - XGBoost Documentation
 - Healthcare churn research literature
