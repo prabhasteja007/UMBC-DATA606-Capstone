@@ -282,7 +282,9 @@ These variables are likely strong predictors in machine learning models.
 
 ### 4.5 Feature Engineering
 
-A **Churn Risk Score** was created using:
+Feature engineering was performed to enhance predictive power and uncover deeper behavioral patterns within the data. New features were derived from existing variables to improve interpretability and support segmentation-based analysis.
+
+#### A **Churn Risk Score** was created using:
 
 - Satisfaction  
 - Missed appointments  
@@ -294,6 +296,19 @@ Patients were segmented into:
 - High Risk  
 
 High-risk patients showed significantly higher churn rates, validating the effectiveness of the risk segmentation approach.
+
+#### Age Group Categorization
+
+Age was transformed into categorical groups:
+
+- Young (0–30)  
+- Middle (30–50)  
+- Senior (50–70)  
+- Elder (70+)  
+
+This transformation allows better understanding of demographic patterns and enables grouping-based analysis for churn behavior.
+
+Different age groups exhibit varying churn patterns, which can support targeted retention strategies for specific demographics.
 
 ---
 
