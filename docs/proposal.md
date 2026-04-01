@@ -210,29 +210,117 @@ Target:
 
 ---
 
-# 4. Exploratory Data Analysis (EDA)
+## 4. Exploratory Data Analysis (EDA)
 
-EDA will be performed using Jupyter Notebook.
-
-Steps include:
-
-- Summary statistics of numerical variables
-- Distribution plots of target variables
-- Correlation heatmaps
-- Class imbalance detection
-- Missing value analysis
-- Duplicate record detection
-- Outlier detection
-- Feature encoding for categorical variables
-- Scaling/normalization if required
-
-Data will be transformed to ensure it is tidy:
-
-- Each row = one entity (patient or customer)
-- Each column = one feature
+EDA was performed using Python and Plotly Express to understand data distributions, relationships, and key drivers of churn and conversion.
 
 ---
 
+### 4.1 Data Cleaning and Preparation
+
+The following preprocessing steps were applied:
+
+- Removed duplicate records to ensure data integrity  
+- Handled missing values using forward-fill imputation  
+- Converted date columns into proper datetime format  
+- Verified data consistency across datasets  
+- Ensured tidy data structure (each row = one observation, each column = one feature)  
+
+---
+
+### 4.2 Univariate Analysis
+
+#### Churn Distribution
+
+The churn distribution provides a baseline understanding of churn prevalence and helps guide model evaluation strategies.
+
+#### Age Distribution
+
+Most patients fall within the middle-age group, indicating that this demographic dominates healthcare utilization.
+
+---
+
+### 4.3 Bivariate Analysis
+
+#### Satisfaction vs Churn
+
+Patients with lower satisfaction scores exhibit significantly higher churn rates, confirming that service quality is a critical retention factor.
+
+#### Missed Appointments vs Churn
+
+Higher missed appointments strongly correlate with churn, indicating disengagement behavior.
+
+#### Tenure vs Churn
+
+Patients with shorter tenure are more likely to churn, highlighting the importance of early-stage experience.
+
+#### Portal Usage vs Churn
+
+Higher portal usage is associated with lower churn, suggesting digital engagement improves retention.
+
+#### Insurance Type vs Churn
+
+Certain insurance categories show higher churn rates, indicating cost or access-related differences.
+
+#### Billing Issues vs Churn
+
+Although only a small proportion of patients experience billing issues, those who do show higher churn rates. This indicates that financial friction significantly impacts retention.
+
+---
+
+### 4.4 Correlation Analysis
+
+Correlation analysis shows strong relationships between:
+
+- Satisfaction metrics and churn  
+- Missed appointments and churn  
+- Tenure and churn (negative correlation)  
+
+These variables are likely strong predictors in machine learning models.
+
+---
+
+### 4.5 Feature Engineering
+
+A **Churn Risk Score** was created using:
+
+- Satisfaction  
+- Missed appointments  
+- Tenure  
+
+Patients were segmented into:
+- Low Risk  
+- Medium Risk  
+- High Risk  
+
+High-risk patients showed significantly higher churn rates, validating the effectiveness of the risk segmentation approach.
+
+---
+
+### 4.6 Marketing Analysis
+
+#### Engagement Funnel
+
+Higher website visits and interaction levels lead to increased conversion rates.
+
+#### Cost Efficiency
+
+Marketing channels vary in cost efficiency, indicating opportunities for budget optimization.
+
+#### Diminishing Returns
+
+Increasing ad spend improves conversion but at a decreasing rate, suggesting diminishing returns.
+
+---
+
+### 4.7 Key Insights
+
+- Patient churn is driven by satisfaction, engagement, and tenure  
+- Missed appointments act as early warning signals  
+- Billing issues, though rare, significantly increase churn risk  
+- Digital engagement improves retention  
+- Marketing effectiveness depends on engagement depth  
+- Increasing ad spend alone is not sufficient due to diminishing returns  
 # 5. Model Training
 
 ## Models for Churn Prediction
