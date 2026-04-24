@@ -360,8 +360,8 @@ This capstone project integrates healthcare analytics and marketing intelligence
 # Project Status
 
 ✔ Proposal Completed  
-⬜ EDA In Progress  
-⬜ Model Training  
-⬜ Web App Deployment  
-⬜ Final Report Submission  
+✔ EDA In Progress  
+✔ Model Training  
+✔ Web App Deployment  
+✔ Final Report Submission  
 
