@@ -60,4 +60,23 @@ The model also includes **feature engineering**, such as:
 
 ---
 
-## 📂 Project Structure
+---
+
+## ⚙️ Installation
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/your-username/your-repo.git
+cd your-repo/app
+```
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+### 3. Running the App
+```bash
+streamlit run app.py
+```
+```bash
+http://localhost:8501
+```
