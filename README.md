@@ -1,370 +1,312 @@
-# UMBC-DATA606-Capstone
+# 🏥 Patient Churn Prediction & Healthcare Retention Analytics
 
-# Patient Churn & Marketing Conversion Predictive Analytics  
-### Healthcare Retention Intelligence System  
+AI-powered healthcare analytics system for predicting patient churn and supporting proactive retention strategies.
 
-Prepared for UMBC Data Science Master Degree Capstone  
-Dr. Chaojie (Jay) Wang  
-
-**Author:** Prabhas Teja Penugonda  
-Deployment: https://patientchurnpredictor.streamlit.app/
-
-GitHub Repository: https://github.com/prabhasteja007/UMBC-DATA606-Capstone
-
-LinkedIn: https://www.linkedin.com/in/prabhas-teja/
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-Deployed-red)
+![Scikit-Learn](https://img.shields.io/badge/ML-ScikitLearn-orange)
+![XGBoost](https://img.shields.io/badge/XGBoost-Enabled-green)
+![Status](https://img.shields.io/badge/Project-Completed-success)
 
 ---
 
-# 1. Background
+## 📌 Project Overview
 
-## What is this project about?
+Patient churn is a major challenge in healthcare systems because losing patients affects continuity of care, operational efficiency, and revenue. This project uses machine learning and healthcare analytics to predict patient churn risk using demographic, behavioral, satisfaction, engagement, and financial factors.
 
-This project focuses on building predictive machine learning models to:
+The project includes:
+- Exploratory Data Analysis (EDA)
+- Feature Engineering
+- Machine Learning Model Training
+- Model Evaluation
+- Streamlit Web Application Deployment
+- Patient Risk Assessment Dashboard
 
-1. Predict patient churn in healthcare systems  
-2. Predict marketing campaign conversion outcomes  
-
-Healthcare providers face major financial and operational challenges when patients discontinue services (churn). Simultaneously, marketing campaigns aim to acquire and convert new patients efficiently. This project combines both operational analytics and marketing intelligence into a unified predictive framework.
-
----
-
-## Why does it matter?
-
-- Patient retention is more cost-effective than acquisition.
-- Early churn detection enables proactive intervention.
-- Marketing conversion prediction improves campaign ROI.
-- Data-driven decision systems enhance healthcare sustainability.
+The deployed application allows healthcare organizations to identify high-risk patients and take proactive retention actions.
 
 ---
 
-## Research Questions
+## 🚀 Live Demo
 
-1. Can we accurately predict which patients are likely to churn?
-2. Which factors contribute most to churn behavior?
-3. Can marketing data predict customer conversion effectively?
-4. Which marketing features drive higher conversion probability?
-5. How can predictive models be deployed into an interactive application?
+### 🌐 Streamlit App
+👉 https://patientchurnpredictor.streamlit.app/
 
 ---
 
-# 2. Data
+## 📂 Repository Structure
 
-This project uses three structured CSV datasets:
-
-- `patient_churn_main.csv`
-- `patient_conversion_marketing.csv`
-- `patient_churn_validation.csv`
-
----
-
-## Dataset 1: Patient Churn Main
-
-- **Rows:** 2,000  
-- **Columns:** 21  
-- **Unit of Observation:** One unique patient  
-
-### Columns
-
-- PatientID
-- Age
-- Gender
-- State
-- Tenure_Months
-- Specialty
-- Insurance_Type
-- Visits_Last_Year
-- Missed_Appointments
-- Days_Since_Last_Visit
-- Last_Interaction_Date
-- Overall_Satisfaction
-- Wait_Time_Satisfaction
-- Staff_Satisfaction
-- Provider_Rating
-- Avg_Out_Of_Pocket_Cost
-- Billing_Issues
-- Portal_Usage
-- Referrals_Made
-- Distance_To_Facility_Miles
-- **Churned (Target Variable)**
-
-### Target Variable
-
-- **Churned**
-  - 0 = Active Patient
-  - 1 = Churned Patient
+```bash
+UMBC-DATA606-Capstone/
+│
+├── app.py                         # Streamlit web application
+├── churn_analysis.py              # Model training and ML pipeline
+├── eda.py                         # Exploratory data analysis
+├── requirements.txt              # Python dependencies
+│
+├── model/
+│   ├── churn_model.pkl           # Trained Random Forest model
+│   ├── model_columns.pkl         # Encoded feature columns
+│   └── best_threshold.pkl        # Tuned classification threshold
+│
+├── docs/
+│   ├── report.md                 # Final project report
+│   └── README.md                 # Docs folder README
+│
+├── data/
+│   ├── patient_churn_main.csv
+│   ├── patient_churn_validation.csv
+│   └── patient_conversion_marketing.csv
+│
+└── README.md
+```
 
 ---
 
-## Dataset 2: Marketing Conversion Data
+## 🎯 Objectives
 
-- **Rows:** 8,000  
-- **Columns:** 20  
-- **Unit of Observation:** One customer exposed to a marketing campaign  
+The primary objectives of this project are:
 
-### Columns
-
-- CustomerID
-- Age
-- Gender
-- Income
-- CampaignChannel
-- CampaignType
-- AdSpend
-- ClickThroughRate
-- ConversionRate
-- WebsiteVisits
-- PagesPerVisit
-- TimeOnSite
-- SocialShares
-- EmailOpens
-- EmailClicks
-- PreviousPurchases
-- LoyaltyPoints
-- AdvertisingPlatform
-- AdvertisingTool
-- **Conversion (Target Variable)**
-
-### Target Variable
-
-- **Conversion**
-  - 0 = Not Converted
-  - 1 = Converted
+- Predict patient churn using machine learning
+- Identify behavioral indicators of disengagement
+- Analyze healthcare retention patterns
+- Build an interactive healthcare analytics dashboard
+- Provide actionable intervention recommendations
 
 ---
 
-## Dataset 3: Churn Validation Dataset
+## 📊 Dataset Information
 
-- **Rows:** 500  
-- **Columns:** 11  
-- Used for independent validation testing  
+### Main Dataset
+- **Rows:** 2,000
+- **Columns:** 21
 
-### Columns
+### Validation Dataset
+- **Rows:** 500
+- **Columns:** 11
 
-- Patient_ID
-- Age
-- Gender
-- Tenure_Months
-- Visits_Last_Year
-- Chronic_Disease
-- Insurance_Type
-- Satisfaction_Score
-- Total_Bill_Amount
-- Missed_Appointments
-- **Churn (Target Variable)**
-
----
-
-# 3. Data Characteristics
-
-## Data Type Summary
-
-The datasets contain:
-
-- Numerical features (Age, Tenure_Months, AdSpend, etc.)
-- Categorical features (Gender, Insurance_Type, CampaignChannel)
-- Behavioral features (Portal_Usage, EmailClicks, WebsiteVisits)
-- Satisfaction metrics
-- Financial metrics
-
----
-
-## Feature Selection Strategy
-
-### For Churn Prediction
-
-Potential predictors:
-
-- Tenure_Months
-- Visits_Last_Year
-- Missed_Appointments
+### Features Include
+- Demographics
+- Insurance details
+- Patient engagement metrics
 - Satisfaction scores
-- Billing_Issues
-- Portal_Usage
-- Distance_To_Facility_Miles
-- Insurance_Type
-- Provider_Rating
-- Avg_Out_Of_Pocket_Cost
+- Billing issues
+- Digital portal usage
+- Visit frequency
+- Distance to facility
 
-Target:
-
-- Churned
-
----
-
-### For Conversion Prediction
-
-Potential predictors:
-
-- CampaignChannel
-- CampaignType
-- AdSpend
-- ClickThroughRate
-- WebsiteVisits
-- EmailOpens
-- EmailClicks
-- TimeOnSite
-- LoyaltyPoints
-- PreviousPurchases
-- AdvertisingPlatform
-
-Target:
-
-- Conversion
+### Target Variable
+- `Churned`
+  - `1 = Churned`
+  - `0 = Retained`
 
 ---
 
-# 4. Exploratory Data Analysis (EDA)
+## 🔍 Exploratory Data Analysis (EDA)
 
-EDA will be performed using Jupyter Notebook.
+The project includes extensive EDA using:
+- Plotly
+- Pandas
+- Seaborn
 
-Steps include:
+### Key Insights
+- Lower satisfaction strongly correlates with churn
+- Missed appointments increase churn risk
+- Digital engagement improves retention
+- Billing issues contribute to patient loss
+- Early-stage patient experience is critical
 
-- Summary statistics of numerical variables
-- Distribution plots of target variables
-- Correlation heatmaps
-- Class imbalance detection
-- Missing value analysis
-- Duplicate record detection
-- Outlier detection
-- Feature encoding for categorical variables
-- Scaling/normalization if required
-
-Data will be transformed to ensure it is tidy:
-
-- Each row = one entity (patient or customer)
-- Each column = one feature
+### Visualizations Included
+- Churn Distribution
+- Satisfaction vs Churn
+- Correlation Heatmap
+- Risk Segmentation
+- Marketing Conversion Analysis
+- Behavioral Interaction Plots
 
 ---
 
-# 5. Model Training
+## ⚙️ Feature Engineering
 
-## Models for Churn Prediction
+Custom engineered features include:
 
-- Logistic Regression
-- Random Forest
-- Gradient Boosting
+### Engagement Score
+```python
+Visits_Last_Year - Missed_Appointments
+```
+
+### Cost Per Visit
+```python
+Avg_Out_Of_Pocket_Cost / (Visits_Last_Year + 1)
+```
+
+### Satisfaction Average
+```python
+(
+    Overall_Satisfaction +
+    Wait_Time_Satisfaction +
+    Staff_Satisfaction
+) / 3
+```
+
+### Risk Segmentation
+Patients are categorized into:
+- Low Risk
+- Medium Risk
+- High Risk
+
+---
+
+## 🤖 Machine Learning Models
+
+The following models were trained and evaluated:
+
+| Model | ROC-AUC |
+|---|---|
+| Random Forest | 0.6467 |
+| XGBoost | 0.6318 |
+| Logistic Regression | 0.6141 |
+
+### ✅ Selected Model
+**Random Forest Classifier**
+
+Reason:
+- Best ROC-AUC score
+- Better stability for deployment
+- Improved threshold calibration
+
+---
+
+## 📈 Model Performance
+
+### Best Model Metrics
+- **ROC-AUC:** 0.647
+- **Optimized Threshold:** 0.457
+- **Balanced Classification Performance**
+
+### Important Predictive Features
+- Days Since Last Visit
+- Overall Satisfaction
+- Distance to Facility
+- Out-of-Pocket Cost
+- Patient Tenure
+- Engagement Score
+
+---
+
+## 🖥️ Streamlit Application Features
+
+### Interactive Risk Assessment
+Users can input:
+- Demographics
+- Clinical details
+- Satisfaction scores
+- Engagement metrics
+- Financial information
+
+### Dashboard Features
+- Churn probability prediction
+- Risk categorization
+- Feature contribution analysis
+- Risk gauge visualization
+- Recommended interventions
+- Batch prediction upload support
+
+### Recommended Actions
+- Patient outreach
+- Telehealth recommendations
+- Financial counseling
+- Portal enrollment encouragement
+- Patient advocacy support
+
+---
+
+## 🛠️ Technologies Used
+
+### Programming & Data Science
+- Python
+- Pandas
+- NumPy
+
+### Machine Learning
+- Scikit-learn
 - XGBoost
-- Support Vector Machine
 
-## Models for Conversion Prediction
+### Visualization
+- Plotly
+- Matplotlib
+- Seaborn
 
-- Logistic Regression
-- Random Forest
-- XGBoost
-- Gradient Boosting
-
----
-
-## Training Strategy
-
-- Train/Test Split: 80/20
-- 5-Fold Cross Validation
-- Hyperparameter tuning using GridSearchCV
-- Feature importance analysis
+### Deployment
+- Streamlit
 
 ---
 
-## Evaluation Metrics
+## 📦 Installation & Setup
 
-Since this is a classification problem:
+### Clone Repository
 
-- Accuracy
-- Precision
-- Recall
-- F1 Score
-- ROC-AUC
-- Confusion Matrix
+```bash
+git clone https://github.com/prabhasteja007/UMBC-DATA606-Capstone.git
+cd UMBC-DATA606-Capstone
+```
 
-Primary evaluation focus:
-- Recall (to minimize false negatives in churn)
-- ROC-AUC (overall discrimination power)
+### Install Dependencies
 
----
+```bash
+pip install -r requirements.txt
+```
 
-## Python Libraries
+### Run Streamlit App
 
-- pandas
-- numpy
-- scikit-learn
-- xgboost
-- matplotlib
-- seaborn
-- plotly
-- joblib
+```bash
+streamlit run app.py
+```
 
 ---
 
-# 6. Application Development
+## 📸 Application Preview
 
-An interactive web application will be developed using:
-
-## Streamlit (Primary Framework)
-
-The application will allow users to:
-
-- Input patient attributes
-- Predict churn probability
-- Predict marketing conversion probability
-- View feature importance visualizations
-- Support decision-making in real-time
+### Features Included
+- Real-time patient churn prediction
+- Healthcare retention analytics
+- Interactive visual dashboards
+- Intervention recommendation engine
 
 ---
 
-# 7. Conclusion
+## 📚 Academic Context
 
-## Summary
+This project was completed as part of the:
 
-This capstone project integrates healthcare analytics and marketing intelligence to:
-
-- Predict patient churn
-- Predict marketing campaign conversion
-- Improve operational efficiency
-- Enhance data-driven healthcare strategy
+### UMBC DATA606 Capstone Project
+Master of Professional Studies in Data Science  
+University of Maryland, Baltimore County (UMBC)
 
 ---
 
-## Limitations
+## 🔮 Future Improvements
 
-- Synthetic/structured dataset constraints
-- Potential class imbalance
-- Limited temporal variables
-- External socioeconomic factors not included
-
----
-
-## Lessons Learned
-
-- Feature engineering significantly impacts performance
-- Behavioral variables strongly influence churn prediction
-- Marketing engagement metrics are key drivers of conversion
-- Model interpretability is critical in healthcare applications
+Potential future enhancements include:
+- Real-world healthcare datasets
+- Deep learning models
+- Explainable AI (SHAP/LIME)
+- Real-time API integration
+- Time-series patient analytics
+- Cloud deployment optimization
 
 ---
 
-## Future Work
+## 👤 Author
 
-- Incorporate time-series modeling
-- Integrate real EMR systems
-- Use SHAP for advanced model explainability
-- Deploy production-level API
-- Explore deep learning architectures
+### Prabhas Teja
 
----
-
-# 8. References
-
-- Scikit-learn Documentation
-- XGBoost Documentation
-- Healthcare churn research literature
-- Marketing analytics research papers
+- GitHub: https://github.com/prabhasteja007
+- LinkedIn: https://www.linkedin.com/in/prabhas-teja/
 
 ---
 
-# Project Status
+## 📄 License
 
-✔ Proposal Completed  
-✔ EDA In Progress  
-✔ Model Training  
-✔ Web App Deployment  
-✔ Final Report Submission  
+This project is developed for academic and educational purposes as part of the UMBC Data Science Capstone program.
 
+---
