@@ -2,9 +2,9 @@
 ### Prepared for UMBC Data Science Master Degree Capstone by Dr. Chaojie (Jay) Wang
 
 **Author:** Prabhas Teja  
-**GitHub Repository:** *Add your GitHub repository link here*  
-**LinkedIn Profile:** *Add your LinkedIn profile link here*  
-**PowerPoint Presentation:** *Add your presentation link here*  
+**GitHub Repository:** *[https://github.com/prabhasteja007/UMBC-DATA606-Capstone](https://github.com/prabhasteja007/UMBC-DATA606-Capstone)*  
+**LinkedIn Profile:** *[https://www.linkedin.com/in/prabhas-teja/](https://www.linkedin.com/in/prabhas-teja/)*  
+**PowerPoint Presentation:** *https://docs.google.com/presentation/d/1G18vXbl70kiTl0kEcRIbcGbl9j0FUNWoGzcftijsbnw/edit?usp=sharing*  
 **YouTube Presentation Video:** *Add your YouTube video link here*  
 
 ---
@@ -405,12 +405,4 @@ Future improvements may include:
    https://pandas.pydata.org/
 
 6. NumPy Documentation  
-   https://numpy.org/
-
-7. Project EDA Notebook
-
-8. Project Model Training Notebook
-
-9. Streamlit Application Source Code
-
-10. Final Report Template
+   https://numpy.org
