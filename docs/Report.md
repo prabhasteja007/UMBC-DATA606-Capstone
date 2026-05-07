@@ -68,10 +68,17 @@ Key EDA visuals (see [Figure 1], [Figure 2]) highlight these points. For example
 
    ```mermaid
    flowchart LR
-     EDA[EDA & Insights] --> FE[Feature Engineering<br/>(Engagement, Risk Score)]
-     FE --> ML[Model Training<br/>(RF, XGBoost, LR)]
-     ML --> Eval[Model Evaluation<br/>(ROC-AUC, Precision/Recall)]
-     Eval --> App[Streamlit App<br/>(Deployment)]
+     EDA["EDA & Insights"] --> FE["Feature Engineering
+      (Engagement, Risk Score)"]
+
+     FE --> ML["Model Training
+      (RF, XGBoost, LR)"]
+
+     ML --> Eval["Model Evaluation
+      (ROC-AUC, Precision/Recall)"]
+
+     Eval --> App["Streamlit App
+   (Deployment)"]
    ```
 
 *Figure 1: Workflow from EDA to deployment.*
