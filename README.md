@@ -8,7 +8,9 @@ Dr. Chaojie (Jay) Wang
 
 **Author:** Prabhas Teja Penugonda  
 Deployment: https://patientchurnpredictor.streamlit.app/
+
 GitHub Repository: https://github.com/prabhasteja007/UMBC-DATA606-Capstone
+
 LinkedIn: https://www.linkedin.com/in/prabhas-teja/
 
 ---
