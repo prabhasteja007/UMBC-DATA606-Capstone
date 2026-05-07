@@ -7,8 +7,9 @@ Prepared for UMBC Data Science Master Degree Capstone
 Dr. Chaojie (Jay) Wang  
 
 **Author:** Prabhas Teja Penugonda  
-GitHub Repository: (https://github.com/prabhasteja007/UMBC-DATA606-Capstone)  
-LinkedIn: (https://www.linkedin.com/in/prabhas-teja/)
+Deployment: https://patientchurnpredictor.streamlit.app/
+GitHub Repository: https://github.com/prabhasteja007/UMBC-DATA606-Capstone
+LinkedIn: https://www.linkedin.com/in/prabhas-teja/
 
 ---
 
