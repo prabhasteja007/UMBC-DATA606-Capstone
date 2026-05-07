@@ -1,56 +1,51 @@
-# 🏥 Patient Churn Prediction & Healthcare Retention Analytics
+# Patient Churn Prediction and Healthcare Retention Analytics
 
-AI-powered healthcare analytics system for predicting patient churn and supporting proactive retention strategies.
-
-![Python](https://img.shields.io/badge/Python-3.10-blue)
-![Streamlit](https://img.shields.io/badge/Streamlit-Deployed-red)
-![Scikit-Learn](https://img.shields.io/badge/ML-ScikitLearn-orange)
-![XGBoost](https://img.shields.io/badge/XGBoost-Enabled-green)
-![Status](https://img.shields.io/badge/Project-Completed-success)
+A machine learning–based healthcare analytics project developed to predict patient churn risk and support proactive patient retention strategies through predictive modeling and interactive analytics.
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 
-Patient churn is a major challenge in healthcare systems because losing patients affects continuity of care, operational efficiency, and revenue. This project uses machine learning and healthcare analytics to predict patient churn risk using demographic, behavioral, satisfaction, engagement, and financial factors.
+Patient retention is an important challenge in healthcare systems because patient disengagement can negatively affect continuity of care, operational efficiency, patient outcomes, and organizational revenue. This project applies machine learning techniques to identify patients at risk of churn using demographic, behavioral, financial, satisfaction, and engagement-related variables.
 
-The project includes:
+The project follows a complete end-to-end data science workflow, including:
+
+- Data preprocessing and cleaning
 - Exploratory Data Analysis (EDA)
-- Feature Engineering
-- Machine Learning Model Training
-- Model Evaluation
-- Streamlit Web Application Deployment
-- Patient Risk Assessment Dashboard
+- Feature engineering
+- Machine learning model development
+- Model evaluation and validation
+- Streamlit-based web application deployment
 
-The deployed application allows healthcare organizations to identify high-risk patients and take proactive retention actions.
-
----
-
-## 🚀 Live Demo
-
-### 🌐 Streamlit App
-👉 https://patientchurnpredictor.streamlit.app/
+The final system provides an interactive interface for healthcare analytics and patient risk assessment.
 
 ---
 
-## 📂 Repository Structure
+## Live Application
+
+**Streamlit Deployment:**  
+https://patientchurnpredictor.streamlit.app/
+
+---
+
+## Repository Structure
 
 ```bash
 UMBC-DATA606-Capstone/
 │
-├── app.py                         # Streamlit web application
-├── churn_analysis.py              # Model training and ML pipeline
-├── eda.py                         # Exploratory data analysis
-├── requirements.txt              # Python dependencies
+├── app.py
+├── churn_analysis.py
+├── eda.py
+├── requirements.txt
 │
 ├── model/
-│   ├── churn_model.pkl           # Trained Random Forest model
-│   ├── model_columns.pkl         # Encoded feature columns
-│   └── best_threshold.pkl        # Tuned classification threshold
+│   ├── churn_model.pkl
+│   ├── model_columns.pkl
+│   └── best_threshold.pkl
 │
 ├── docs/
-│   ├── report.md                 # Final project report
-│   └── README.md                 # Docs folder README
+│   ├── report.md
+│   └── README.md
 │
 ├── data/
 │   ├── patient_churn_main.csv
@@ -62,84 +57,89 @@ UMBC-DATA606-Capstone/
 
 ---
 
-## 🎯 Objectives
+## Objectives
 
 The primary objectives of this project are:
 
-- Predict patient churn using machine learning
-- Identify behavioral indicators of disengagement
-- Analyze healthcare retention patterns
-- Build an interactive healthcare analytics dashboard
-- Provide actionable intervention recommendations
+1. Analyze factors influencing patient churn
+2. Develop predictive machine learning models for churn prediction
+3. Identify behavioral indicators associated with disengagement
+4. Evaluate model performance using appropriate classification metrics
+5. Build an interactive web application for healthcare analytics and risk assessment
 
 ---
 
-## 📊 Dataset Information
+## Dataset Description
 
-### Main Dataset
+The project utilizes three datasets:
+
+### 1. Main Patient Churn Dataset
 - **Rows:** 2,000
 - **Columns:** 21
 
-### Validation Dataset
+### 2. Validation Dataset
 - **Rows:** 500
 - **Columns:** 11
 
+### 3. Marketing Conversion Dataset
+Used for marketing and engagement analysis.
+
 ### Features Include
-- Demographics
-- Insurance details
-- Patient engagement metrics
-- Satisfaction scores
-- Billing issues
-- Digital portal usage
+- Demographic information
+- Insurance type
 - Visit frequency
-- Distance to facility
+- Missed appointments
+- Satisfaction metrics
+- Provider ratings
+- Billing issues
+- Portal usage
+- Distance to healthcare facility
 
 ### Target Variable
 - `Churned`
-  - `1 = Churned`
-  - `0 = Retained`
+  - `1 = Patient churned`
+  - `0 = Patient retained`
 
 ---
 
-## 🔍 Exploratory Data Analysis (EDA)
+## Exploratory Data Analysis
 
-The project includes extensive EDA using:
-- Plotly
-- Pandas
-- Seaborn
+Exploratory analysis was conducted using Pandas, Plotly, and Seaborn to identify patterns and relationships within the data.
 
-### Key Insights
-- Lower satisfaction strongly correlates with churn
-- Missed appointments increase churn risk
-- Digital engagement improves retention
-- Billing issues contribute to patient loss
-- Early-stage patient experience is critical
+### Key Findings
+- Lower satisfaction scores were associated with higher churn probability
+- Missed appointments were strong indicators of patient disengagement
+- Patients with shorter tenure demonstrated higher churn rates
+- Portal usage was associated with improved retention
+- Billing-related issues contributed to increased churn risk
 
-### Visualizations Included
-- Churn Distribution
-- Satisfaction vs Churn
-- Correlation Heatmap
-- Risk Segmentation
-- Marketing Conversion Analysis
-- Behavioral Interaction Plots
+### Analytical Components
+- Distribution analysis
+- Correlation analysis
+- Risk segmentation
+- Behavioral pattern analysis
+- Marketing conversion analysis
 
 ---
 
-## ⚙️ Feature Engineering
+## Feature Engineering
 
-Custom engineered features include:
+Several derived features were created to improve predictive performance.
 
 ### Engagement Score
+
 ```python
 Visits_Last_Year - Missed_Appointments
 ```
 
 ### Cost Per Visit
+
 ```python
 Avg_Out_Of_Pocket_Cost / (Visits_Last_Year + 1)
 ```
 
 ### Satisfaction Average
+
 ```python
 (
     Overall_Satisfaction +
@@ -149,39 +149,25 @@ Avg_Out_Of_Pocket_Cost / (Visits_Last_Year + 1)
 ```
 
 ### Risk Segmentation
-Patients are categorized into:
+Patients were categorized into:
 - Low Risk
 - Medium Risk
 - High Risk
 
 ---
 
-## 🤖 Machine Learning Models
+## Machine Learning Models
 
-The following models were trained and evaluated:
+The following classification models were implemented and evaluated:
 
-| Model | ROC-AUC |
+| Model | ROC-AUC Score |
 |---|---|
 | Random Forest | 0.6467 |
 | XGBoost | 0.6318 |
 | Logistic Regression | 0.6141 |
 
-### ✅ Selected Model
-**Random Forest Classifier**
-
-Reason:
-- Best ROC-AUC score
-- Better stability for deployment
-- Improved threshold calibration
-
----
-
-## 📈 Model Performance
-
-### Best Model Metrics
-- **ROC-AUC:** 0.647
-- **Optimized Threshold:** 0.457
-- **Balanced Classification Performance**
+### Selected Model
+The Random Forest classifier achieved the highest ROC-AUC score and was selected for deployment within the application.
 
 ### Important Predictive Features
 - Days Since Last Visit
@@ -189,40 +175,36 @@ Reason:
 - Distance to Facility
 - Out-of-Pocket Cost
 - Patient Tenure
-- Engagement Score
+- Satisfaction Average
+- Engagement Metrics
 
 ---
 
-## 🖥️ Streamlit Application Features
+## Web Application
 
-### Interactive Risk Assessment
-Users can input:
-- Demographics
-- Clinical details
-- Satisfaction scores
-- Engagement metrics
-- Financial information
+A Streamlit-based web application was developed to provide an interactive interface for patient churn prediction.
 
-### Dashboard Features
-- Churn probability prediction
-- Risk categorization
+### Application Features
+- Real-time churn prediction
+- Patient risk categorization
+- Interactive visual analytics
 - Feature contribution analysis
-- Risk gauge visualization
-- Recommended interventions
-- Batch prediction upload support
+- Intervention recommendations
+- Batch prediction functionality
 
-### Recommended Actions
-- Patient outreach
-- Telehealth recommendations
+### Intervention Recommendations
+The application generates actionable recommendations such as:
+- Proactive patient outreach
+- Telehealth engagement
 - Financial counseling
 - Portal enrollment encouragement
 - Patient advocacy support
 
 ---
 
-## 🛠️ Technologies Used
+## Technologies Used
 
-### Programming & Data Science
+### Programming and Data Analysis
 - Python
 - Pandas
 - NumPy
@@ -231,7 +213,7 @@ Users can input:
 - Scikit-learn
 - XGBoost
 
-### Visualization
+### Data Visualization
 - Plotly
 - Matplotlib
 - Seaborn
@@ -241,7 +223,7 @@ Users can input:
 
 ---
 
-## 📦 Installation & Setup
+## Installation and Execution
 
 ### Clone Repository
 
@@ -256,7 +238,7 @@ cd UMBC-DATA606-Capstone
 pip install -r requirements.txt
 ```
 
-### Run Streamlit App
+### Run Application
 
 ```bash
 streamlit run app.py
@@ -264,49 +246,38 @@ streamlit run app.py
 
 ---
 
-## 📸 Application Preview
+## Academic Context
 
-### Features Included
-- Real-time patient churn prediction
-- Healthcare retention analytics
-- Interactive visual dashboards
-- Intervention recommendation engine
+This project was completed as part of the DATA606 Capstone Project requirement for the:
 
----
-
-## 📚 Academic Context
-
-This project was completed as part of the:
-
-### UMBC DATA606 Capstone Project
-Master of Professional Studies in Data Science  
+**Master of Professional Studies in Data Science**  
 University of Maryland, Baltimore County (UMBC)
 
 ---
 
-## 🔮 Future Improvements
+## Future Work
 
 Potential future enhancements include:
-- Real-world healthcare datasets
-- Deep learning models
-- Explainable AI (SHAP/LIME)
-- Real-time API integration
-- Time-series patient analytics
-- Cloud deployment optimization
+- Integration with real-world healthcare datasets
+- Explainable AI techniques such as SHAP and LIME
+- Time-series patient behavior modeling
+- Deep learning approaches
+- API integration with healthcare systems
+- Improved external validation and calibration
 
 ---
 
-## 👤 Author
+## Author
 
-### Prabhas Teja
+**Prabhas Teja**  
+Master of Professional Studies in Data Science  
+University of Maryland, Baltimore County (UMBC)
 
-- GitHub: https://github.com/prabhasteja007
-- LinkedIn: https://www.linkedin.com/in/prabhas-teja/
-
----
-
-## 📄 License
-
-This project is developed for academic and educational purposes as part of the UMBC Data Science Capstone program.
+GitHub:  
+https://github.com/prabhasteja007
 
 ---
+
+## License
+
+This repository is intended for academic and educational purposes.
