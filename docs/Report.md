@@ -1,243 +1,416 @@
-# Patient Churn & Marketing Conversion Predictive Analytics
+# Patient Churn Prediction and Healthcare Retention Analytics  
+### Prepared for UMBC Data Science Master Degree Capstone by Dr. Chaojie (Jay) Wang
 
-**Author:** Prabhas Teja Penugonda 
-**Course:** Data Science Capstone (DSXXX)  
-**Date:** April 2026  
+**Author:** Prabhas Teja  
+**GitHub Repository:** *Add your GitHub repository link here*  
+**LinkedIn Profile:** *Add your LinkedIn profile link here*  
+**PowerPoint Presentation:** *Add your presentation link here*  
+**YouTube Presentation Video:** *Add your YouTube video link here*  
 
-## Abstract
+---
 
-In this capstone project, we analyze patient churn in a telehealth service to develop a predictive retention model and a deployable application. We utilize a publicly available dataset (“Telehealth Marketing & Churn Analytics”) containing patient demographics, engagement metrics, marketing conversion, and churn outcomes. Through exploratory data analysis (EDA), we identify key patterns—such as high overall churn (~68%) and strong links between low satisfaction, missed appointments, and churn. We engineer new features (e.g. **Engagement Score**, **Risk Score/Levels**) and train classification models (Logistic Regression, Random Forest, XGBoost) to predict churn. The best model (Random Forest) achieves ~0.65 ROC-AUC on training data but only ~0.51 on hold-out validation, highlighting generalization challenges due to class imbalance. We deploy the model via a Streamlit app that computes a patient’s churn risk (%) and engagement metrics given their profile. The report details data provenance, methods, results (including feature importances and evaluation metrics), and practical recommendations for reducing patient churn.
+# 1. Background
 
-## Background and Motivation
+Healthcare organizations face significant challenges in retaining patients and maintaining long-term engagement. Patient churn occurs when patients stop visiting a healthcare provider or discontinue care services. High churn rates can negatively impact continuity of care, operational efficiency, patient outcomes, and revenue generation.
 
-Patient churn (attrition) is a major concern for telehealth providers and healthcare systems, as retaining existing patients is often more cost-effective than acquiring new ones. High churn rates can signal issues in patient satisfaction, engagement, or service quality. Telehealth services have grown rapidly, but ensuring continuity of care requires understanding why patients disengage. Predictive churn models enable proactive retention strategies (e.g. targeted outreach to high-risk patients) and better resource allocation. This project aims to build a decision-oriented churn risk model for telehealth patients, aligning with strategic goals of improving patient retention and healthcare outcomes.
+This project focuses on predicting patient churn using machine learning techniques and developing an interactive web application that enables healthcare administrators to proactively identify high-risk patients. By leveraging patient demographics, engagement metrics, satisfaction scores, financial factors, and behavioral indicators, this project aims to support data-driven patient retention strategies.
 
-- **Problem Statement:** Identify factors driving patient churn and predict churn risk from patient and engagement data, enabling targeted interventions.  
-- **Objectives:** Analyze patient behavior and churn patterns (EDA), build predictive models, evaluate performance, and create a user-friendly application for stakeholders (healthcare managers, retention teams).
+The project also includes marketing conversion analytics to understand how digital engagement and marketing effectiveness influence patient acquisition and retention.
 
-## Data
+## Research Questions
 
-**Source & Provenance:** We use the **Telehealth Marketing & Churn Analytics** dataset from Kaggle (Indrajith Sudusinghe et al.), which was created for telehealth marketing optimization. The dataset includes three CSV files:
+1. What factors contribute most significantly to patient churn?
+2. Can machine learning models accurately predict patient churn risk?
+3. Which patient behaviors indicate early signs of disengagement?
+4. How can healthcare organizations use predictive analytics to improve retention strategies?
+5. How does digital engagement and marketing performance affect patient conversion and retention?
 
-- **patient_churn_main.csv** (≅2000 rows): Primary patient data with demographic, engagement, and churn label.  
-- **patient_conversion_marketing.csv:** Marketing conversion data (e.g. whether patient responded to campaigns).  
-- **patient_churn_validation.csv:** Separate hold-out sample for validating model performance.
+The project follows an end-to-end data science workflow including exploratory data analysis (EDA), feature engineering, model development, evaluation, and deployment through a Streamlit web application.
 
-*Note:* The Kaggle dataset is publicly available but requires login. We assume data integrity and use it as provided. (If dataset changes, results may differ.)
+---
 
-**Schema & Features:** Key columns include:
+# 2. Data
 
-- **Demographics:** `PatientID` (unique identifier), `Age`, `Gender`, `State`.  
-- **Service Data:** `Tenure_Months` (duration as patient), `Insurance` (binary or type), `Payment_Method`.  
-- **Engagement Metrics:** `Visits_Last_3months`, `Missed_Appointments_12months`, `Cancelled_Appointments_3months`, `Portal_Usage` (e.g. number of portal logins per period).  
-- **Customer Experience:** `Satisfaction_Score` (e.g. 1–5 rating), `Billing_Issues` (count or binary), marketing conversion flags (e.g. `Conversion_14days`).  
-- **Target:** `Churned` (binary: Yes/No or 1/0 indicating patient discontinued service).
+The project uses three datasets:
 
-| PatientID | Age | Gender | State | Tenure_Months | Insurance | Visits_Last_3mo | Missed_Appointments_12mo | Satisfaction_Score | Billing_Issues | Portal_Usage | Churned |
-|:---------:|:---:|:------:|:-----:|:-------------:|:---------:|:---------------:|:------------------------:|:-----------------:|:--------------:|:------------:|:-------:|
-| 101       | 45  | F      | CA    | 12            | Yes       | 3               | 1                        | 4.2               | 0              | 5            | Yes     |
-| 102       | 59  | M      | TX    | 6             | No        | 1               | 2                        | 2.8               | 1              | 0            | Yes     |
-| 103       | 30  | F      | NY    | 18            | Yes       | 4               | 0                        | 4.9               | 0              | 8            | No      |
-| 104       | 50  | M      | CA    | 24            | Yes       | 2               | 0                        | 3.5               | 1              | 3            | No      |
+1. `patient_churn_main.csv` – Primary dataset used for training and analysis  
+2. `patient_churn_validation.csv` – External validation dataset  
+3. `patient_conversion_marketing.csv` – Marketing and conversion analytics dataset  
 
-*Table 1: Sample rows from patient_churn_main.csv (values are illustrative).*
+The datasets were loaded and analyzed using Python, Pandas, Plotly, and Scikit-learn libraries.
 
-**Data Quality:** The data was fairly clean. The EDA script (`eda.py`) handled missing values (none in main churn dataset) and removed duplicates. The validation set (`patient_churn_validation.csv`) is used only in final evaluation. All features were numeric or easily coded (Gender, Insurance, etc.), with no major anomalies noted.
+## Dataset Size and Shape
 
-## Exploratory Data Analysis (EDA)
+### Main Churn Dataset
+- Shape: **2000 rows × 21 columns**
+- Each row represents **one patient record**
 
-EDA was conducted in `eda.py`, focusing on understanding churn patterns and feature distributions.
+### Validation Dataset
+- Shape: **500 rows × 11 columns**
 
-- **Overall Churn Rate:** The combined data shows a high churn rate of approximately **68%** (1367 churned vs. 633 retained)【3†L1-L4】. This imbalance is significant. *(Figure: Churn rate distribution)*  
-- **Demographics vs Churn:** Age and gender showed little effect on churn. Geographic location (`State`) had minor differences, but not strongly predictive.  
-- **Engagement & Satisfaction:** We observed that **lower patient satisfaction** is strongly associated with higher churn (e.g., average satisfaction ~3.0 for churners vs ~4.5 for non-churners). Patients with **more missed appointments** or **long gaps since last visit** were more likely to churn. *(Figure: Boxplots of satisfaction by churn status)*  
-- **Service Usage:** Patients with higher **portal usage** (online account activity) tended to stay (negative correlation with churn). Patients with frequent visits (engagement) also churned less.  
-- **Billing & Insurance:** Customers reporting billing issues or lacking insurance exhibited slightly higher churn rates. Payment method had minor effect.  
-- **Marketing Conversion:** A subset of data on marketing conversion showed initial interest did not guarantee retention; about half of converted patients eventually churned.
+### Marketing Dataset
+- Used for conversion and campaign analysis
 
-Key EDA visuals (see [Figure 1], [Figure 2]) highlight these points. For example, **Figure 1** (hypothetical) shows churn rate by satisfaction quartile, illustrating a sharp increase in churn at lower satisfaction scores. *(Chart generation assumptions: created in `eda.py` using Matplotlib/Seaborn.)*
+## Data Features
 
-**Feature Correlations:** We computed correlations and observed:
-- `Satisfaction_Score` and `Engagement_Score` (visits minus missed) strongly correlated with churn (negative).
-- `Missed_Appointments` and `Days_Since_Last_Visit` were positively correlated with churn.
-- Demographic factors (Age, Gender) showed near-zero correlation.
+The main dataset contains patient demographic, behavioral, financial, and engagement-related variables.
 
-**Feature Engineering in EDA:** We derived:
-- **Engagement Score** = `Visits_Last_3months - Missed_Appointments_12months` (higher = better engagement).  
-- **Risk Score (0–100)** by combining key factors (higher score indicates higher predicted churn risk; formula unspecified but based on satisfaction, misses, etc.). We then binned **Risk Levels** into *Low/Medium/High*. These features captured patterns: nearly 90% of high-risk patients churned, versus ~30% of low-risk.
+| Column Name | Data Type | Description |
+|---|---|---|
+| PatientID | Object | Unique patient identifier |
+| Age | Integer | Patient age |
+| Gender | Object | Patient gender |
+| State | Object | Patient state |
+| Tenure_Months | Integer | Duration of relationship with provider |
+| Specialty | Object | Medical specialty |
+| Insurance_Type | Object | Insurance category |
+| Visits_Last_Year | Integer | Number of visits in the previous year |
+| Missed_Appointments | Integer | Number of missed appointments |
+| Days_Since_Last_Visit | Integer | Days since last interaction |
+| Overall_Satisfaction | Float | Patient satisfaction score |
+| Wait_Time_Satisfaction | Float | Wait time satisfaction score |
+| Staff_Satisfaction | Float | Staff satisfaction score |
+| Provider_Rating | Float | Provider quality rating |
+| Avg_Out_Of_Pocket_Cost | Integer | Average patient healthcare cost |
+| Billing_Issues | Integer | Indicates billing-related problems |
+| Portal_Usage | Integer | Indicates patient portal usage |
+| Referrals_Made | Integer | Number of referrals |
+| Distance_To_Facility_Miles | Float | Distance to healthcare facility |
+| Churned | Integer | Target variable indicating churn |
 
-   ```mermaid
-   flowchart LR
-     EDA["EDA & Insights"] --> FE["Feature Engineering
-      (Engagement, Risk Score)"]
+## Target Variable
 
-     FE --> ML["Model Training
-      (RF, XGBoost, LR)"]
+The target variable for machine learning is:
 
-     ML --> Eval["Model Evaluation
-      (ROC-AUC, Precision/Recall)"]
+- **Churned**
+  - `1 = Patient churned`
+  - `0 = Patient retained`
 
-     Eval --> App["Streamlit App
-   (Deployment)"]
-   ```
+## Selected Features for Modeling
 
-*Figure 1: Workflow from EDA to deployment.*
+The following variables were used as predictors:
+
+- Demographic variables
+- Satisfaction metrics
+- Engagement metrics
+- Financial indicators
+- Digital engagement metrics
+- Behavioral indicators
+- Engineered features such as:
+  - `Engagement_Score`
+  - `Cost_Per_Visit`
+  - `Satisfaction_Avg`
+
+---
+
+# 3. Exploratory Data Analysis (EDA)
+
+EDA was performed using Jupyter Notebook, Pandas, Plotly Express, and Seaborn. The analysis focused on understanding patient behavior, churn patterns, and feature relationships.
+
+## Data Cleaning
+
+The following preprocessing steps were performed:
+
+- Removed duplicate records
+- Checked for missing values
+- Converted date columns to datetime format
+- Forward-filled missing values where appropriate
+- Created readable labels for visualization
+
+The dataset contained no missing values after cleaning.
+
+## Key Findings
+
+### Churn Distribution
+
+The dataset showed a relatively high churn rate:
+
+- **Churn Rate: 68.35%**
+
+This indicated significant patient disengagement within the dataset.
+
+### Satisfaction vs Churn
+
+Patients with lower satisfaction scores showed substantially higher churn rates. Satisfaction metrics emerged as strong indicators of retention behavior.
+
+### Missed Appointments vs Churn
+
+Higher numbers of missed appointments strongly correlated with churn, suggesting disengagement behavior prior to patient loss.
+
+### Tenure vs Churn
+
+Patients with shorter tenure were more likely to churn. This highlighted the importance of early-stage patient experience and onboarding quality.
+
+### Portal Usage vs Churn
+
+Patients actively using the healthcare portal demonstrated lower churn rates, indicating that digital engagement positively impacts retention.
+
+### Billing Issues vs Churn
+
+Patients experiencing billing issues had significantly higher churn rates compared to those without billing problems. Financial friction was identified as an important churn driver.
+
+## Correlation Analysis
+
+A correlation heatmap was generated to analyze feature relationships. The analysis showed:
+
+- Satisfaction variables negatively correlated with churn
+- Missed appointments positively correlated with churn
+- Tenure negatively correlated with churn
+
+These features were later confirmed as important predictors in machine learning models.
 
 ## Feature Engineering
 
-Based on EDA insights, we created several new features in `churn_analysis.py`:
+Several new features were created.
 
-- **Engagement Score:** `Visits_Last_3months - Missed_Appointments_12months`. Captures net patient engagement.  
-- **Cost per Visit:** If billing data available (not explicitly given), assume formula `Avg_Cost / Visits` (not directly in dataset; omitted or unknown).  
-- **Satisfaction_Avg:** If separate satisfaction metrics existed, average them; else simply use `Satisfaction_Score`.  
-- **Risk_Level:** Categorical low/medium/high based on quantiles of a combined risk score (unsupervised).  
-- **Binary Flags:** e.g. `High_Billing_Issue = 1 if Billing_Issues>0 else 0`.
+### Engagement Score
 
-All categorical features (Gender, Insurance, Payment_Method, State) were one-hot encoded or label-encoded. Numeric features were scaled or used raw since tree models can handle scale differences.
-
-_No advanced feature interactions (e.g. polynomial, clustering) were used due to project scope; all features came directly from the provided data or simple aggregations._
-
-## Modeling
-
-We split the **main dataset** (`patient_churn_main.csv`) into training and test sets. Due to the separate validation file, our workflow was:
-
-1. **Train/Test Split:** 80% train, 20% test from main data (stratified by churn) for initial model selection.  
-2. **Validation Set:** The provided `patient_churn_validation.csv` (unnumbered rows) held out for final testing.
-
-We trained three baseline classifiers using `scikit-learn` and `xgboost`:
-
-| Model             | Hyperparameters            | Training ROC-AUC | Validation ROC-AUC | Precision (Churn) | Recall (Churn) |
-|-------------------|----------------------------|------------------|--------------------|-------------------|----------------|
-| Logistic Regression | Default (L2 reg., solver=LBFGS) | ~0.61           | ~0.51             | ~0.60            | ~0.70         |
-| Random Forest     | 100 trees (default), max_depth=None | ~0.65       | ~0.51             | ~0.63            | ~0.68         |
-| XGBoost           | Default params (n_estimators=100) | ~0.63         | ~0.50             | ~0.60            | ~0.65         |
-
-*Table 2: Model performance. (All values are approximate; unspecified hyperparameters assumed defaults. Validation AUC is similar across models due to data imbalance.)*
-
-- **Data Imbalance:** The dataset had ~2:1 churn:non-churn. This caused models to bias toward predicting churn (higher recall, lower precision for non-churn). We attempted re-weighting classes (class_weight in Logistic/Forest), but issues remained.  
-- **Preprocessing:** We applied one-hot encoding for categorical vars and StandardScaler for numerical features (for Logistic Regression; tree models did not require scaling). No outliers or missing data issues were present.  
-- **Cross-Validation:** 5-fold CV on training set gave similar AUC ~0.62–0.65 for RF and XGBoost.  
-- **Hyperparameter Tuning:** Limited grid search (on Random Forest `max_depth`, `min_samples_split`) did not significantly improve results. We note that more extensive tuning or feature selection could be explored.
-
-**Best Model:** Random Forest performed best on training (AUC~0.65)【4†L1-L3】, so it was chosen for deployment. However, all models had **validation AUC ~0.51**, only marginally better than random. This indicates **poor generalization** (possibly due to small data or concept drift between train/test). The RF model tended to predict most samples as churn (true positive rate high, false positive for non-churns high) in the validation set, as seen in the confusion matrix (almost no TN).
-
-### Model Evaluation
-
-- **Metrics:** We report ROC-AUC, Precision, Recall, and confusion matrices. On training data, RF achieved AUC≈0.647 (tuned), Precision≈0.63, Recall≈0.68. On validation (unseen set), ROC-AUC fell to ~0.51, Precision for churn dropped to ~0.52, Recall ~0.72, with many false positives.  
-- **Calibration:** We plotted calibration curves. The Random Forest was slightly over-confident, so we applied Platt scaling (sigmoid) via `CalibratedClassifierCV` for probability outputs. Calibration improved Brier score by ~5%.  
-- **Feature Importance (RF):** The top 5 features by Gini importance were:
-  1. **Days_Since_Last_Visit** (proxy via `Tenure_Months` & visits)  
-  2. **Satisfaction_Score**  
-  3. **Distance/State** (e.g. remote patients churned more)  
-  4. **Cost per Visit** (imputed)  
-  5. **Tenure_Months**  
-
-*(Figure 2: Bar chart of feature importances – placeholder)*
-
-- **SHAP Analysis:** Using SHAP (TreeExplainer) on RF, we confirmed the same features had largest Shapley values. Patients with low satisfaction and long absences had positive SHAP contributions to "Churn". (Detailed SHAP plots omitted for brevity.)
-
-```mermaid
-gantt
-    title Project Timeline (Jan–Mar 2026)
-    dateFormat  YYYY-MM-DD
-    section Data & EDA
-      Acquire Data        :done,    a1, 2026-01-05, 2026-01-12
-      Exploratory Analysis :done,    a2, after a1, 2026-01-25
-    section Modeling
-      Feature Engineering :done,    b1, after a2, 2026-02-05
-      Model Development   :active,  b2, after b1, 2026-02-20
-      Model Evaluation    :         b3, after b2, 2026-03-01
-    section Deployment
-      App Development     :         c1, after b3, 2026-03-10
-      Report Writing      :         c2, after c1, 2026-03-20
+```python
+Visits_Last_Year - Missed_Appointments
 ```
 
-*Figure 3: Project timeline (assumed dates). Tasks and durations are illustrative.*
+### Cost Per Visit
 
-## Results
-
-- **Train vs Validation:** The large drop from training AUC (~0.65) to validation (~0.51) indicates overfitting and/or distribution shift. This is likely due to class imbalance and possibly differences between the main and validation cohorts.  
-- **Final Model:** The Random Forest was re-trained on the full training set. On this model, we achieved (on training) ROC-AUC 0.647, but we caution its limited predictive power on new data.  
-- **Confusion Matrix (Validation):** On the hold-out set, most patients were predicted to churn. For example, out of ~500 validation patients, ~450 were predicted churn (true churn=350, true keep=150), yielding ~95% recall but low precision. *(Figure 4: Confusion matrix – hypothetical values.)*  
-- **ROC & PR Curves:** The ROC curve on validation was close to diagonal (AUC ~0.51). Precision-Recall curve was also weak (average precision ~0.50). This suggests the model does little better than chance.  
-- **Calibration:** The calibrated probabilities somewhat improved mapping (observed vs predicted churn rate aligned). We used calibrated probabilities in the Streamlit app to report risk percentage.
-
-| Class | Precision (train) | Recall (train) | Precision (val) | Recall (val) |
-|-------|------------------:|---------------:|---------------:|-------------:|
-| Churn| 0.63 | 0.68 | 0.52 | 0.72 |
-| No-Churn | 0.57 | 0.55 | 0.50 | 0.28 |
-
-*Table 3: Precision/Recall for each class (Random Forest).*
-
-## Application (Streamlit App)
-
-A Streamlit web app was developed (`app.py`) to allow healthcare managers to estimate churn risk for individual patients. 
-
-- **Inputs:** The app collects patient attributes via form fields: Age, Gender, State, Insurance (Yes/No), Tenure (months), Visits in last 3 months, Missed Appointments (12m), Cancelled Appointments (3m), Portal Usage (logins), Satisfaction Score, Billing Issues (Yes/No), etc.  
-- **Processing:** The input is vectorized and fed to the trained Random Forest model (via a `predict_proba` call). The raw probability of `Churn=Yes` is converted to a percentage and classified into **Risk Level** (Low < 33%, Medium 33–66%, High > 66%).  
-- **Outputs:** The UI displays:
-  - **Churn Risk (%):** The probability that the patient will churn.  
-  - **Risk Level:** Low/Medium/High (for intuitive categorization).  
-  - **Estimated Engagement Score:** The app also recomputes the Engagement Score and flags if patients are at risk due to low visits or high missed appointments.  
-  - *(Optional)* A textual explanation: e.g., “Low satisfaction and high missed appointments are increasing risk.” (Using SHAP or simple rules – *not implemented due to time constraints*).  
-- **User Interface:** The sidebar hosts inputs; the main panel shows results, charts (e.g. sparkline of risk over time), and suggestions (e.g., “Consider follow-up call”). Screenshots are not shown here; below is a schematic of the flow.
-
-```
-+--------------------------------------------------+
-|          Telehealth Churn Risk Predictor         |
-| [Input Form]        [Result]                     |
-| Age: [  ]           [Churn Risk: 72%]            |
-| Gender: [M/F]       [Risk Level: High]           |
-| State: [___]        [Engagement Score: -1]       |
-| Insurance: [Y/N]    [Recommendation: “Focus on Satisfaction & Attendance”] |
-| Visits 3mo: [__]    [Chart: Risk Trend (N/A)]    |
-| Missed 12mo: [__]   [Feature Importance Bars]    |
-| ...                [Model Calibration Plot]     |
-+--------------------------------------------------+
+```python
+Avg_Out_Of_Pocket_Cost / (Visits_Last_Year + 1)
 ```
 
-*Figure 4: Layout of the Streamlit app (conceptual; actual UI is interactive).*
+### Satisfaction Average
 
-The Streamlit app is designed for ease of use. It can be deployed on a server or run locally. Stakeholders can input a new patient’s data and immediately see the retention risk and which factors contribute to it. This operationalizes the model for decision-making.
+```python
+(
+    Overall_Satisfaction +
+    Wait_Time_Satisfaction +
+    Staff_Satisfaction
+) / 3
+```
+
+### Risk Score
+
+A custom churn risk score was engineered using:
+- Satisfaction
+- Missed appointments
+- Patient tenure
+
+Patients were segmented into:
+- Low Risk
+- Medium Risk
+- High Risk
+
+---
+
+# 4. Model Training
+
+The project implemented multiple machine learning models to predict patient churn.
+
+## Development Environment
+
+The models were developed using:
+- Google Colab
+- Jupyter Notebook
+- Python
+
+## Python Libraries Used
+
+The following packages were used:
+
+- Pandas
+- NumPy
+- Scikit-learn
+- XGBoost
+- Plotly
+- Joblib
+- Streamlit
+
+## Data Preparation
+
+### Train-Test Split
+
+The dataset was split using:
+- 80% training data
+- 20% testing data
+
+Stratified sampling was used to preserve churn distribution.
+
+### Feature Encoding
+
+Categorical variables were encoded using:
+
+```python
+pd.get_dummies()
+```
+
+### Scaling
+
+StandardScaler was used for Logistic Regression.
+
+```python
+StandardScaler()
+```
+
+## Machine Learning Models
+
+### Logistic Regression
+- Balanced class weights
+- Max iterations: 1000
+
+### Random Forest Classifier
+- 300 estimators
+- Balanced class weights
+- Parallel processing enabled
+
+### XGBoost Classifier
+- 500 estimators
+- Learning rate: 0.03
+- Max depth: 4
+
+## Model Performance
+
+| Model | ROC-AUC Score |
+|---|---|
+| Random Forest | 0.6467 |
+| XGBoost | 0.6318 |
+| Logistic Regression | 0.6141 |
+
+The **Random Forest model** achieved the highest ROC-AUC score and was selected for deployment.
+
+## Feature Importance
+
+Top predictive features included:
+
+1. Days_Since_Last_Visit
+2. Overall_Satisfaction
+3. Distance_To_Facility_Miles
+4. Avg_Out_Of_Pocket_Cost
+5. Tenure_Months
+6. Age
+7. Satisfaction_Avg
+8. Cost_Per_Visit
+
+## Validation Performance
+
+A shared-feature XGBoost model was validated using the external validation dataset.
+
+### Validation ROC-AUC
+- **0.5131**
+
+The lower performance on external validation indicated possible dataset distribution differences and highlighted opportunities for future improvement.
+
+---
+
+# 5. Application of the Trained Models
+
+A Streamlit-based web application was developed to allow users to interact with the trained machine learning model and generate patient churn predictions in real time.
+
+## Features of the Web Application
+
+### Patient Risk Assessment
+
+Users can input:
+- Demographics
+- Clinical information
+- Engagement metrics
+- Satisfaction scores
+- Financial information
+
+The application predicts:
+- Churn probability
+- Risk category
+- Intervention recommendations
+
+### Risk Categories
+- Low Risk
+- Medium Risk
+- High Risk
+
+### Interactive Visualizations
+
+The application includes:
+- Risk gauge charts
+- Feature contribution analysis
+- Behavioral analytics
+- Batch prediction support
+
+### Recommended Interventions
+
+The app provides personalized intervention recommendations such as:
+- Proactive outreach
+- Patient advocacy
+- Financial counseling
+- Telehealth suggestions
+- Portal enrollment promotion
+
+---
+
+# 6. Conclusion
+
+This project successfully demonstrated the application of machine learning and healthcare analytics to predict patient churn and identify high-risk patients.
+
+The analysis revealed that:
+- Patient satisfaction strongly impacts retention
+- Missed appointments are early indicators of churn
+- Digital engagement improves patient loyalty
+- Financial issues increase churn risk
+- Early-stage patient experience is critical
+
+Among the evaluated models, Random Forest achieved the best predictive performance and was integrated into a Streamlit application for real-time prediction and decision support.
 
 ## Limitations
 
-- **Data Imbalance:** With ~68% churn, the model learned to over-predict churn. The minority class (non-churn) had low representation, hurting recall. Future work should gather more examples of retained patients to balance the dataset.  
-- **Generalization:** Validation AUC was only ~0.51. This suggests the model does not generalize well, possibly due to overfitting, concept drift, or differences in population. It may not reliably identify at-risk patients without further tuning or data.  
-- **Feature Gaps:** Important factors may be missing (e.g. specific health conditions, communication frequency, patient feedback comments). The current data may lack social or contextual variables.  
-- **Overprediction:** The model tends to flag almost all patients as “high risk” (especially those with any risk factor). This yields many false positives. A calibrated threshold (not 0.5) or more conservative cutoff may be needed.  
-- **Temporal Dynamics:** We used static snapshots. Churn is temporal by nature; sequential modeling (time-series or survival analysis) could improve predictions.  
-- **Bias:** If the data collection was biased (e.g. only certain clinics or regions), the model might not perform well elsewhere. We assume the Kaggle data is representative, but real deployments should validate on local data.
+Several limitations were identified:
 
-In summary, while the modeling demonstrates feasibility, the performance is modest. Stakeholders should be cautious and consider the model as one tool among others (e.g. combining with human triage).
+- Moderate predictive performance
+- Limited dataset size
+- Potential synthetic nature of data
+- External validation performance drop
+- Limited temporal and longitudinal features
 
-## Recommendations and Next Steps
+## Lessons Learned
 
-Based on our findings, we suggest:
+This project provided experience in:
+- Healthcare analytics
+- Exploratory data analysis
+- Feature engineering
+- Machine learning model evaluation
+- Streamlit application development
+- Model deployment workflows
 
-1. **Targeted Interventions:** Focus retention efforts on patients with **low satisfaction scores, high missed appointments, or long absence**. Examples: automated reminders, satisfaction surveys, or financial counseling for those with billing issues.  
-2. **Data Improvements:** Collect additional data (e.g. more negative churn samples, patient health records, real-time follow-up data) to enrich the model.  
-3. **Model Refinement:** Explore advanced techniques:
-   - Upsampling/SMOTE for balancing classes.  
-   - Ensemble models or neural networks with more features.  
-   - Cost-sensitive learning to penalize false positives differently.  
-   - Time-to-event models for churn timing prediction.  
-4. **Calibration:** Since raw probabilities were overconfident, maintain calibration steps in deployment to ensure meaningful risk percentages.  
-5. **A/B Testing:** Before wide rollout, test the model’s recommendations in a pilot program to evaluate impact on retention (e.g. contacting predicted high-risk patients vs. control).  
-6. **Monitor and Update:** Patient behavior may change. Continuously monitor model performance (using new data) and retrain periodically.
+## Future Work
 
-Implementing these could improve patient retention rates and justify the investment in predictive analytics.
+Future improvements may include:
+- Larger real-world healthcare datasets
+- Deep learning approaches
+- Time-series modeling
+- Explainable AI techniques
+- Real-time healthcare integration
+- Improved external validation
 
-## Appendix
+---
 
-- **Code References:** Key scripts and notebooks:
-  - *EDA and Analysis:* `eda.py` (data loading, cleaning, visualization).  
-  - *Modeling:* `churn_analysis.py` (feature engineering, model training, evaluation).  
-  - *Application:* `app.py` (Streamlit app code linking to saved Random Forest model).  
-  - *Models:* Serialized model artifacts located in the `models/` directory (e.g. `rf_model.pkl`).  
-- **Assumptions:** 
-  - Where hyperparameters are not specified, we used default settings of the libraries.  
-  - The exact formula for the “Risk Score” created in EDA was not provided; we assumed it combined key churn drivers linearly.  
-  - Timeline dates and task durations are illustrative, based on a typical semester project.
+# 7. References
 
-*No external images are included; all charts described are conceptual placeholders. Mermaid diagrams (workflow, timeline) are included above.*
+1. Scikit-learn Documentation  
+   https://scikit-learn.org/
+
+2. XGBoost Documentation  
+   https://xgboost.readthedocs.io/
+
+3. Streamlit Documentation  
+   https://streamlit.io/
+
+4. Plotly Documentation  
+   https://plotly.com/python/
+
+5. Pandas Documentation  
+   https://pandas.pydata.org/
+
+6. NumPy Documentation  
+   https://numpy.org/
+
+7. Project EDA Notebook
+
+8. Project Model Training Notebook
+
+9. Streamlit Application Source Code
+
+10. Final Report Template
