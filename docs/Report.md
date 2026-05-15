@@ -5,7 +5,7 @@
 **GitHub Repository:** *[https://github.com/prabhasteja007/UMBC-DATA606-Capstone](https://github.com/prabhasteja007/UMBC-DATA606-Capstone)*  
 **LinkedIn Profile:** *[https://www.linkedin.com/in/prabhas-teja/](https://www.linkedin.com/in/prabhas-teja/)*  
 **PowerPoint Presentation:** *https://docs.google.com/presentation/d/1G18vXbl70kiTl0kEcRIbcGbl9j0FUNWoGzcftijsbnw/edit?usp=sharing*  
-**YouTube Presentation Video:** *Add your YouTube video link here*  
+**YouTube Presentation Video
 
 ---
 
